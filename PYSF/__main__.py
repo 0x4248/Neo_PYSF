@@ -16,9 +16,10 @@ sys.path.append(__MAIN__PATH)
 
 def count_scripts():
     x = 0
-    for file in os.listdir(os.path.join(__MAIN__PATH, "scripts")):
-        if file.endswith(".py"):
-            x += 1
+    for root, dirs, files in os.walk(os.path.join(__MAIN__PATH, "scripts")):
+        for file in files:
+            if file.endswith(".py"):
+                x += 1
     return x
 
 def convert_script_to_py_path(script):
@@ -31,8 +32,8 @@ def convert_script_to_py_path(script):
 
 def main():
     print_utils.banner()
-    print("Welcome to PYSF!")
-    print(f"Found {count_scripts()} scripts")
+    print("Welcome to Neo PYSF!")
+    print("Found "+ Fore.BLUE + str(count_scripts()) + Style.RESET_ALL + " scripts")
     command_line_message = "Neo PYSF (" + Fore.RED + "NO SCRIPT" + Style.RESET_ALL + ") > "
     script = None
     variables = []
