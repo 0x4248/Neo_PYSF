@@ -37,6 +37,7 @@ def main():
     command_line_message = "Neo PYSF (" + Fore.RED + "NO SCRIPT" + Style.RESET_ALL + ") > "
     script = None
     variables = []
+    recent_scan_results = []
     while True:
         entry = input(command_line_message)
         if entry.upper() == "EXIT" or entry.upper() == "QUIT" or entry.upper() == "Q" or entry.upper() == "E":
@@ -82,12 +83,17 @@ def main():
             variables = []
 
         elif entry.upper().startswith("LIST"):
-
+            x = 0
+            recent_scan_results = []
             for root, dirs, files in os.walk(os.path.join(__MAIN__PATH, "scripts")):
                 for file in files:
                     if file.endswith(".py"):
                         path = root.replace(os.path.join(__MAIN__PATH, "scripts"), "")
-                        print(f"{path}/{file.replace('.py', '')}")
+                        if path.startswith("/"):
+                            path = path[1:]
+                        print(f"{Fore.CYAN}{x}{Style.RESET_ALL} {path}/{file.replace('.py', '')}")
+                        x += 1
+                        recent_scan_results.append(f"{path}/{file.replace('.py', '')}")
 
         elif entry.upper().startswith("USE"):
             try:
@@ -95,6 +101,9 @@ def main():
             except IndexError:
                 print_utils.error("Usage: USE <script>")
                 continue
+            # if number like set 1 select the 2nd item in recent_scan_results if there are items
+            if script.isdigit() and len(recent_scan_results) > 0:
+                script = recent_scan_results[int(script)]
             script_path = convert_script_to_py_path(script)
             try:
                 script_module = importlib.import_module(script_path)
@@ -180,6 +189,41 @@ def main():
             print_utils.info("Requirements:")
             for requirement in info["requirements"]:
                 print(f"\t{requirement}")
+        elif entry.upper().startswith("HELP"):
+            print_utils.info("Neo PYSF Help")
+            print_utils.info("Commands:")
+            print("\tSET <variable_name> <variable_value>\tSets a variable")
+            print("\tPRINTVARS (PV)\t\t\t\tPrints all variables")
+            print("\tCLEARVARS (CV)\t\t\t\tClears all variables")
+            print("\tLIST\t\t\t\t\tLists all scripts")
+            print("\tUSE <script>\t\t\t\tLoads a script")
+            print("\tRUN\t\t\t\t\tRuns the loaded script")
+            print("\tINFO\t\t\t\t\tDisplays info about the loaded script")
+            print("\tSEARCH\t\t\t\t\tSearches for a script")
+            print("\tHELP\t\t\t\t\tDisplays this help message")
+            print("\tEXIT (QUIT, Q, E)\t\t\tExits Neo PYSF")
+        elif entry.upper().startswith("SEARCH"):
+            try:
+                search_term = entry.split(" ")[1]
+            except IndexError:
+                print_utils.error("Usage: SEARCH <search_term>")
+                continue
+            found = False
+            x = 0
+            recent_scan_results = []
+            for root, dirs, files in os.walk(os.path.join(__MAIN__PATH, "scripts")):
+                for file in files:
+                    if file.endswith(".py"):
+                        path = root.replace(os.path.join(__MAIN__PATH, "scripts"), "")
+                        if search_term in path or search_term in file.replace(".py", ""):
+                            if path.startswith("/"):
+                                path = path[1:]
+                            print(f"{Fore.CYAN}{x}{Style.RESET_ALL} {path.replace(search_term, Fore.RED + search_term + Style.RESET_ALL)}/{file.replace('.py', '').replace(search_term, Fore.RED + search_term + Style.RESET_ALL)}")
+                            found = True
+                            x += 1
+                            recent_scan_results.append(f"{path}/{file.replace('.py', '')}")
+            if not found:
+                print_utils.warn("No scripts found")
 
 if __name__ == "__main__":
     main()
