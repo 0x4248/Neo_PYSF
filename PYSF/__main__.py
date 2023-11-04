@@ -48,7 +48,8 @@ def main():
         elif entry.upper().startswith("SET"):
             try:
                 variable_name = entry.split(" ")[1].upper()
-                variable_value = entry.split(" ")[2]
+                variable_value = entry.split(" ")[2:]
+                variable_value = " ".join(variable_value)
                 variable_exists = False
             except IndexError:
                 print_utils.error("Usage: SET <variable_name> <variable_value>")
