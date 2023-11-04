@@ -1,6 +1,5 @@
 from lib import print_utils
 from lib import var_util
-import psutil
 import socket
 
 INFO = {
@@ -15,6 +14,11 @@ INFO = {
 }
 
 def main(variables):
+    try:
+        import psutil
+    except:
+        print_utils.error("psutil is not installed. Please install it with 'pip3 install psutil'")
+        return 1
     host_name = socket.gethostname()
     ip_address = socket.gethostbyname(host_name)
     

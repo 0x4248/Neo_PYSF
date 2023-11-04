@@ -13,6 +13,6 @@ INFO = {
 }
 
 def main(variables):
-    string = variables[0][1]
+    string = var_util.get_var_data(variables, "STRING")
     print_utils.success(string.encode().hex())
     return 0

@@ -1,6 +1,5 @@
 from lib import print_utils
 from lib import var_util
-import requests
 
 INFO = {
     "name": "HTTP Request",
@@ -14,6 +13,11 @@ INFO = {
 }
 
 def main(variables):
+    try:
+        import requests
+    except:
+        print_utils.error("requests is not installed. Please install it with 'pip3 install requests'")
+        return 1
     url = var_util.get_var_data(variables, "URL")
     method = var_util.get_var_data(variables, "METHOD")
     if method == None:
