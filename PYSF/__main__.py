@@ -14,6 +14,7 @@ from lib import print_utils
 __MAIN__PATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(__MAIN__PATH)
 
+
 def count_scripts():
     x = 0
     for root, dirs, files in os.walk(os.path.join(__MAIN__PATH, "scripts")):
@@ -21,6 +22,7 @@ def count_scripts():
             if file.endswith(".py"):
                 x += 1
     return x
+
 
 def convert_script_to_py_path(script):
     """
@@ -30,21 +32,29 @@ def convert_script_to_py_path(script):
     script = script.replace("/", ".")
     return f"scripts.{script}"
 
+
 def main():
     print_utils.banner()
     print("Welcome to Neo PYSF!")
-    print("Found "+ Fore.BLUE + str(count_scripts()) + Style.RESET_ALL + " scripts")
-    command_line_message = "Neo PYSF (" + Fore.RED + "NO SCRIPT" + Style.RESET_ALL + ") > "
+    print("Found " + Fore.BLUE + str(count_scripts()) + Style.RESET_ALL + " scripts")
+    command_line_message = (
+        "Neo PYSF (" + Fore.RED + "NO SCRIPT" + Style.RESET_ALL + ") > "
+    )
     script = None
     variables = []
     recent_scan_results = []
     while True:
         entry = input(command_line_message)
-        if entry.upper() == "EXIT" or entry.upper() == "QUIT" or entry.upper() == "Q" or entry.upper() == "E":
+        if (
+            entry.upper() == "EXIT"
+            or entry.upper() == "QUIT"
+            or entry.upper() == "Q"
+            or entry.upper() == "E"
+        ):
             sys.exit(0)
         elif entry == "":
             continue
-        
+
         elif entry.upper().startswith("SET"):
             try:
                 variable_name = entry.split(" ")[1].upper()
@@ -70,11 +80,17 @@ def main():
             print_utils.info("Printing variables")
             for variable in variables:
                 if variable[1].count(".") == 3:
-                    print(f"{Fore.GREEN}{variable[0]}{Style.RESET_ALL} => {Fore.GREEN}{variable[1]}{Style.RESET_ALL}")
+                    print(
+                        f"{Fore.GREEN}{variable[0]}{Style.RESET_ALL} => {Fore.GREEN}{variable[1]}{Style.RESET_ALL}"
+                    )
                 elif variable[1].isdigit():
-                    print(f"{Fore.BLUE}{variable[0]}{Style.RESET_ALL} => {Fore.BLUE}{variable[1]}{Style.RESET_ALL}")
+                    print(
+                        f"{Fore.BLUE}{variable[0]}{Style.RESET_ALL} => {Fore.BLUE}{variable[1]}{Style.RESET_ALL}"
+                    )
                 else:
-                    print(f"{Fore.YELLOW}{variable[0]}{Style.RESET_ALL} => {Fore.YELLOW}{variable[1]}{Style.RESET_ALL}")
+                    print(
+                        f"{Fore.YELLOW}{variable[0]}{Style.RESET_ALL} => {Fore.YELLOW}{variable[1]}{Style.RESET_ALL}"
+                    )
 
         elif entry.upper().startswith("CLEARVARS") or entry.upper().startswith("CV"):
             if len(variables) == 0:
@@ -92,7 +108,9 @@ def main():
                         path = root.replace(os.path.join(__MAIN__PATH, "scripts"), "")
                         if path.startswith("/"):
                             path = path[1:]
-                        print(f"{Fore.CYAN}{x}{Style.RESET_ALL} {path}/{file.replace('.py', '')}")
+                        print(
+                            f"{Fore.CYAN}{x}{Style.RESET_ALL} {path}/{file.replace('.py', '')}"
+                        )
                         x += 1
                         recent_scan_results.append(f"{path}/{file.replace('.py', '')}")
 
@@ -109,13 +127,17 @@ def main():
             try:
                 script_module = importlib.import_module(script_path)
             except ModuleNotFoundError:
-                print_utils.error(f"Script {script} not found or cant import required modules")
+                print_utils.error(
+                    f"Script {script} not found or cant import required modules"
+                )
                 continue
             except Exception as e:
                 print_utils.error(f"Error loading script {script}: {e}")
                 continue
             print_utils.success(f"Loaded script {script}")
-            command_line_message = "Neo PYSF (" + Fore.GREEN + script + Style.RESET_ALL + ") > "
+            command_line_message = (
+                "Neo PYSF (" + Fore.GREEN + script + Style.RESET_ALL + ") > "
+            )
 
         elif entry.upper().startswith("RUN"):
             error_occured = False
@@ -142,10 +164,12 @@ def main():
                                     variable_current_value = variable[1]
                                     break
                             if variable_required and variable_current_value == None:
-                                print_utils.error(f"Variable {variable_name} is required")
+                                print_utils.error(
+                                    f"Variable {variable_name} is required"
+                                )
                                 error_occured = True
                 if error_occured == True:
-                    continue    
+                    continue
                 else:
                     ret = script_module.main(variables)
             except Exception as e:
@@ -154,10 +178,17 @@ def main():
             if ret == 0:
                 continue
             elif ret == None:
-                print_utils.info(f"Script {script} returned" + Fore.BLUE + " None" + Style.RESET_ALL)
+                print_utils.info(
+                    f"Script {script} returned" + Fore.BLUE + " None" + Style.RESET_ALL
+                )
             else:
-                print_utils.info(f"Script {script} returned" + Fore.BLUE + f" {ret}" + Style.RESET_ALL)
-                
+                print_utils.info(
+                    f"Script {script} returned"
+                    + Fore.BLUE
+                    + f" {ret}"
+                    + Style.RESET_ALL
+                )
+
         elif entry.upper().startswith("INFO"):
             if script is None:
                 print_utils.error("No script loaded")
@@ -181,7 +212,9 @@ def main():
                     if variable[0] == variable_name:
                         variable_current_value = variable[1]
                         break
-                print(f"\t{variable_name}\t{variable_type}\t{variable_required}\t\t{variable_default}\t{variable_current_value}")
+                print(
+                    f"\t{variable_name}\t{variable_type}\t{variable_required}\t\t{variable_default}\t{variable_current_value}"
+                )
             print_utils.info("Variables Description:")
             for i in range(len(info["variables"])):
                 variable_name = info["variables"][i]
@@ -216,15 +249,22 @@ def main():
                 for file in files:
                     if file.endswith(".py"):
                         path = root.replace(os.path.join(__MAIN__PATH, "scripts"), "")
-                        if search_term in path or search_term in file.replace(".py", ""):
+                        if search_term in path or search_term in file.replace(
+                            ".py", ""
+                        ):
                             if path.startswith("/"):
                                 path = path[1:]
-                            print(f"{Fore.CYAN}{x}{Style.RESET_ALL} {path.replace(search_term, Fore.RED + search_term + Style.RESET_ALL)}/{file.replace('.py', '').replace(search_term, Fore.RED + search_term + Style.RESET_ALL)}")
+                            print(
+                                f"{Fore.CYAN}{x}{Style.RESET_ALL} {path.replace(search_term, Fore.RED + search_term + Style.RESET_ALL)}/{file.replace('.py', '').replace(search_term, Fore.RED + search_term + Style.RESET_ALL)}"
+                            )
                             found = True
                             x += 1
-                            recent_scan_results.append(f"{path}/{file.replace('.py', '')}")
+                            recent_scan_results.append(
+                                f"{path}/{file.replace('.py', '')}"
+                            )
             if not found:
                 print_utils.warn("No scripts found")
+
 
 if __name__ == "__main__":
     main()
