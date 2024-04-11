@@ -1,8 +1,8 @@
 # Neo PYSF
 # The new version of PYSF. A metasploit-like framework but for python scripts instead of exploits.
-# GitHub: https://www.github.com/lewisevans2007/Neo_PYSF
+# GitHub: https://www.github.com/0x4248/Neo_PYSF
 # License: GNU General Public License v3.0
-# By: Lewis Evans
+# By: 0x4248
 
 from colorama import Fore, Style
 
